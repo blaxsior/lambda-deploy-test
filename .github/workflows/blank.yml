@@ -1,0 +1,31 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run a one-line script
+        run: echo hello, world!
+      - name: Run ls -al
+        run: ls -al
+
+      - name: zip files
+        uses: TheDoctor0/zip-release@latest
+        with:
+          path: ./src 
+
+      - name: console result
+        run: ls -al
