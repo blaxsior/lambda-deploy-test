@@ -22,16 +22,19 @@ jobs:
       - name: zip files
         uses: TheDoctor0/zip-release@0.7.1
         with:
-          path: ./src
+          directory: ./src
 
       - name: console result
-        run: ls -al
+        run: |
+          ls -al
+          cd src
+          ls -al
         
-      - name: deploy to aws
-        uses: appleboy/lambda-action@v0.1.9 
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_access_key: ${{ secrets.AWS_ACCESS_PASSWORD }}
-          aws_region: ${{ secrets.AWS_REGION }}
-          function_name: news_crawling
-          zip_file: release.zip
+      # - name: deploy to aws
+      #   uses: appleboy/lambda-action@v0.1.9 
+      #   with:
+      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY }}
+      #     aws_secret_access_key: ${{ secrets.AWS_ACCESS_PASSWORD }}
+      #     aws_region: ${{ secrets.AWS_REGION }}
+      #     function_name: news_crawling
+      #     zip_file: release.zip
