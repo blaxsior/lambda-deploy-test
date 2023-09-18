@@ -22,7 +22,7 @@ jobs:
       - name: zip files
         uses: TheDoctor0/zip-release@0.7.1
         with:
-          path: ./
+          path: ./src
 
       - name: console result
         run: ls -al
