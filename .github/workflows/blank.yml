@@ -19,16 +19,17 @@ jobs:
       - name: Run ls -al
         run: ls -al
 
-      - name: zip files
+      - name: compile ts to js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18    
+      - run: npm install
+      - run: tsc
+
+      - name: create zip file
         uses: TheDoctor0/zip-release@0.7.1
         with:
-          directory: ./src
-
-      - name: console result
-        run: |
-          ls -al
-          cd src
-          ls -al
+          directory: ./dist
         
       - name: deploy to aws
         uses: appleboy/lambda-action@v0.1.9 
@@ -37,4 +38,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_ACCESS_PASSWORD }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: news_crawling
-          zip_file: ./src/release.zip
+          zip_file: ./dist/release.zip
