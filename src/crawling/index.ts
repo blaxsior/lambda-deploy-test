@@ -1,19 +1,19 @@
 import { getNewsBody } from './body.js';
 import { getNewsComments } from './comments.js';
 import { getNewsLinkList } from './list.js';
-import { getDateYTString } from './util.js';
+import { getYesterdayString } from './util.js';
 
 export async function getNewsAndCommentResults(
   keyword: string,
   idlist: string[],
 ) {
-  const dates = getDateYTString();
+  const date = getYesterdayString();
   // '1020', '1025', '1005', '1023', '1032'
   const urlList: string[] = [];
   for (const office_id of idlist) {
     const urls = await getNewsLinkList({
-      ds: dates.yesterday,
-      de: dates.today,
+      ds: date,
+      de: date,
       query: keyword,
       news_office_checked: office_id,
     });
