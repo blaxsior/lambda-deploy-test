@@ -2,7 +2,7 @@ import axios from 'axios';
 import { parse } from 'node-html-parser';
 import { validateNotEmpty } from '../util/validation.js';
 
-export async function getNewsBody(address: string) {
+export async function getNewsBody(address: string): Promise<Article> {
   const req = await axios.get(address, {
     headers: {
       'User-Agent':
@@ -57,4 +57,9 @@ export async function getNewsBody(address: string) {
     body: newsParagraphs.filter((it) => it.length > 0),
   };
 }
-// todo: 문자열 하나하나 단위로 저장
+
+export interface Article {
+  title: string;
+  publishedAt: string;
+  body: string[];
+}

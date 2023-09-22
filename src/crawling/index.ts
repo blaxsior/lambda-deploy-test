@@ -1,12 +1,21 @@
-import { getNewsBody } from './body.js';
-import { getNewsComments } from './comments.js';
+import { type Article, getNewsBody } from './body.js';
+import { type Comment, getNewsComments } from './comments.js';
 import { getNewsLinkList } from './list.js';
 import { getYesterdayString } from './util.js';
+
+type CrawlingDataType = {
+  keyword: string; // 관련 키워드
+  data: {
+    url: string; // 뉴스 url
+    news: Article;
+    comments: Comment[];
+  }[];
+};
 
 export async function getNewsAndCommentResults(
   keyword: string,
   idlist: string[],
-) {
+): Promise<CrawlingDataType> {
   const date = getYesterdayString();
   // '1020', '1025', '1005', '1023', '1032'
   const urlList: string[] = [];
@@ -20,10 +29,10 @@ export async function getNewsAndCommentResults(
     urlList.push(...urls);
   }
 
-  const result: {
+  const news_list: {
     url: string;
-    news: Awaited<ReturnType<typeof getNewsBody>>;
-    comments: Awaited<ReturnType<typeof getNewsComments>>;
+    news: Article;
+    comments: Comment[];
   }[] = [];
   for (const addr of urlList) {
     //스포츠 기사 등 제외, 순수 기사만 채택
@@ -31,7 +40,7 @@ export async function getNewsAndCommentResults(
     try {
       const news = await getNewsBody(addr);
       const comments = await getNewsComments(addr);
-      result.push({
+      news_list.push({
         url: addr,
         news: news,
         comments: comments,
@@ -40,7 +49,10 @@ export async function getNewsAndCommentResults(
       console.log(e);
     }
   }
-  return result;
+  return {
+    keyword: keyword,
+    data: news_list,
+  }
 }
 
 // 예시 사용 방식

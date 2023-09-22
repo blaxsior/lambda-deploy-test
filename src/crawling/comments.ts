@@ -61,7 +61,7 @@ export async function getNewsCommentsObject(
  * @param limit 최대로 읽어오는 댓글 페이지 수. default = 10
  * @returns {Promise<Comment[]>} 댓글 객체 목록
  */
-export async function getNewsComments(newsAddr: string, limit = 10) {
+export async function getNewsComments(newsAddr: string, limit = 10): Promise<Comment[]> {
   const id = getNewsId(newsAddr);
   //objectId, page, moreParam.next는 각 API에서 추가해야 함
   const commentAddr = getBaseUrl(path, options, { objectId: id });
@@ -93,7 +93,7 @@ function getNewsCommentsFromCommentsObj(data: any): Comment[] {
   return commentObjs;
 }
 
-interface Comment {
+export interface Comment {
   content: string;
   sympathyCount: number;
   antipathyCount: number;
