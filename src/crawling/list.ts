@@ -127,7 +127,7 @@ export async function getNewsLinkList(
       inner_delay -= sub_delay_ms;
     }
 
-    const root = parse(req.data);
+    root = parse(req.data);
     const targets = root.querySelectorAll(
       'div.info_group > a.info:not(.press)',
     );
