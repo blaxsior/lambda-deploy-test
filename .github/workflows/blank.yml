@@ -22,12 +22,17 @@ jobs:
       - name: Run ls -al
         run: ls -al
 
-      - name: compile ts to js
+      - name: install npm packages
         uses: actions/setup-node@v3
         with:
           node-version: 18    
-      - run: npm install
-      - run: tsc
+      - run: npm ci
+
+      - name: test phase
+        run: npm test
+
+      - name: compile files
+        run: tsc
 
       - name: create zip file
         uses: TheDoctor0/zip-release@0.7.1
