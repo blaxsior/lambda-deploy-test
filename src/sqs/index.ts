@@ -1,5 +1,5 @@
 import type { SQSEvent } from "aws-lambda";
-import { validateSqsData } from "src/util/validation";
+import { validateSqsData } from "../util/validation";
 
 interface SqsDataType { // Sqs에서 전달하는 데이터
   keywords: string[];
