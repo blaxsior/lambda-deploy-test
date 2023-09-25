@@ -1,5 +1,5 @@
 import Ajv, { JSONSchemaType } from 'ajv';
-import { Comment, NewsCommentObject } from 'src/crawling/types';
+import { NewsCommentObject } from '../crawling/types';
 
 export function validateNotEmpty(target: any, message = 'target is empty') {
   if (target === null || target === undefined) {
