@@ -2,6 +2,7 @@ import axios from 'axios';
 import { validateNewsCommentsObj } from '../util/validation.js';
 import { getBaseUrl } from './util.js';
 import { setTimeout } from 'timers/promises';
+import { Comment } from './types.js';
 
 // apis.naver.com/commentBox/cbox/web_naver_list_jsonp.json?
 // ticket=news
@@ -94,20 +95,13 @@ export async function getNewsComments(newsAddr: string, limit = 10): Promise<Com
 }
 
 function getNewsCommentsFromCommentsObj(data: any): Comment[] {
-  validateNewsCommentsObj(data);
+  if(!validateNewsCommentsObj(data)) throw new Error('ERROR[news object is not valid]');
 
-  const commentObjs = data.result.commentList.map((it) => ({
+  const commentObjs: Comment[] = data.result.commentList.map((it) => ({
     contents: it.contents,
     sympathyCount: it.sympathyCount,
     antipathyCount: it.antipathyCount,
     date: it.modTime,
   }));
   return commentObjs;
-}
-
-export interface Comment {
-  content: string;
-  sympathyCount: number;
-  antipathyCount: number;
-  date: string;
 }

@@ -70,13 +70,13 @@ const default_delayOpt: DelayOptions = {
 export async function getNewsLinkList(
   variable_options: NLListOptions,
   delayOptions: DelayOptions = {},
-) {
+): Promise<string[]> {
   const { default_delay_ms, delay_ms, max_wait_ms, stop_creterion } = {
     ...default_delayOpt,
     ...delayOptions,
   } satisfies DelayOptions;
-  let inner_delay = delay_ms;
-  const sub_delay_ms = delay_ms / 2;
+  let inner_delay = delay_ms!;
+  const sub_delay_ms = delay_ms! / 2;
 
   //내부적으로는 start 옵션만 변경됨
   if (variable_options.news_office_checked) {
@@ -93,8 +93,8 @@ export async function getNewsLinkList(
   // console.log(`${baseUrl}&start=${count}`);
   // not found 페이지가 나오기 전까지 계속 탐색하기.
   do {
-    if (inner_delay > max_wait_ms) return link_list;
-    if (req_count % stop_creterion === 0) {
+    if (inner_delay > max_wait_ms!) return link_list;
+    if (req_count % stop_creterion! === 0) {
       // 90개 읽을 때마다 멈춤
       await setTimeoutPromises(inner_delay);
     } else {
@@ -120,21 +120,21 @@ export async function getNewsLinkList(
       req_count = 0;
       continue;
     }
-    if (!req) return null;
+    if (!req) return [];
 
     count += 10;
-    if (inner_delay > delay_ms) {
+    if (inner_delay > delay_ms!) {
       inner_delay -= sub_delay_ms;
     }
 
-    root = parse(req.data);
+    const root = parse(req.data);
     const targets = root.querySelectorAll(
       'div.info_group > a.info:not(.press)',
     );
     for (const target of targets) {
       const link = target.getAttribute('href');
-      link_list.push(link);
+      link && link_list.push(link);
     }
-  } while (root.querySelector('div.info_group') != null);
+  } while (root!.querySelector('div.info_group') != null);
   return link_list;
 }

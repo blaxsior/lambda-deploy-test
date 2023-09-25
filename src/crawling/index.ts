@@ -1,16 +1,10 @@
-import { type Article, getNewsBody } from './body.js';
-import { type Comment, getNewsComments } from './comments.js';
+import { getNewsBody } from './body.js';
+import { getNewsComments } from './comments.js';
+import { Article, Comment, type CrawlingDataType } from './types.js';
 import { getNewsLinkList } from './list.js';
 import { getYesterdayString } from './util.js';
 
-type CrawlingDataType = {
-  keyword: string; // 관련 키워드
-  data: {
-    url: string; // 뉴스 url
-    news: Article;
-    comments: Comment[];
-  }[];
-};
+
 
 export async function getNewsAndCommentResults(
   keyword: string,
@@ -26,7 +20,7 @@ export async function getNewsAndCommentResults(
       query: keyword,
       news_office_checked: office_id,
     });
-    urlList.push(...urls);
+    urls && urlList.push(...urls);
   }
 
   const news_list: {

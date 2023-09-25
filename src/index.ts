@@ -17,7 +17,10 @@ const s3 = new S3Client({ region });
 
 export const handler: SQSHandler = async (event, context): Promise<void> => {
   for (const record of event.Records) {
-    const { keywords, news_sources } = getSqsDataFromBodyStr(record.body);
+    const data = getSqsDataFromBodyStr(record.body);
+    if(!data) return;
+    
+    const {keywords, news_sources} = data;
     // const keyword = '윤석열';
     // const list = ['1002'];
     // 키워드를 읽어와서 아래와 같이 처리해야 함...

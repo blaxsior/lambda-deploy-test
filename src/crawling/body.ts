@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { parse } from 'node-html-parser';
 import { validateNotEmpty } from '../util/validation.js';
+import { Article } from './types.js';
 
 export async function getNewsBody(address: string): Promise<Article> {
   const req = await axios.get(address, {
@@ -56,10 +57,4 @@ export async function getNewsBody(address: string): Promise<Article> {
     // author,
     body: newsParagraphs.filter((it) => it.length > 0),
   };
-}
-
-export interface Article {
-  title: string;
-  publishedAt: string;
-  body: string[];
 }

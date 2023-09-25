@@ -1,13 +1,22 @@
-import type { SQSEvent } from "aws-lambda";
-import { validateSqsData } from "../util/validation";
+// import { validateSqsData } from "../util/validation";
 
-interface SqsDataType { // Sqs에서 전달하는 데이터
-  keywords: string[];
-  news_sources: string[];
-}
+import Ajv, {JTDSchemaType} from 'ajv/dist/jtd';
+// import Ajv, { JSONSchemaType } from 'ajv';
+import { type SqsDataType } from './types.js';
 
-export function getSqsDataFromBodyStr(body: string): SqsDataType {
-  const json = JSON.parse(body);
-  validateSqsData(json);
-  return json;
+const ajv = new Ajv({removeAdditional: "all"});
+const sqsDataSchema: JTDSchemaType<SqsDataType> = {
+  properties: {
+    keywords: {elements: {type: "string"}},
+    news_sources: {elements: {type: "string"}}
+  },
+  additionalProperties: false
 }
+export const validateSqsData = ajv.compile(sqsDataSchema);
+export const getSqsDataFromBodyStr = ajv.compileParser<SqsDataType>(sqsDataSchema);
+// const validate = ajv.compile(sqsDataSchema);
+// export function getSqsDataFromBodyStr(body: string): SqsDataType {
+//   const json = JSON.parse(body);
+//   validateSqsData(json);
+//   return json;
+// }

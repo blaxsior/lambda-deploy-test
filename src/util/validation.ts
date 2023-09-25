@@ -1,28 +1,58 @@
+import Ajv, { JSONSchemaType } from 'ajv';
+import { Comment, NewsCommentObject } from 'src/crawling/types';
+
 export function validateNotEmpty(target: any, message = 'target is empty') {
   if (target === null || target === undefined) {
     throw new Error(message);
   }
 }
+const ajv = new Ajv({ removeAdditional: 'all' });
+const NewsCommentObjectSchema: JSONSchemaType<NewsCommentObject> = {
+  type: 'object',
+  required: ['result'],
+  properties: {
+    result: {
+      type: 'object',
+      required: ['commentList', 'pageModel'],
+      properties: {
+        commentList: {
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['contents', 'sympathyCount', 'antipathyCount', 'modTime'],
+            properties: {
+              contents: { type: 'string' },
+              sympathyCount: { type: 'number' },
+              antipathyCount: { type: 'number' },
+              modTime: { type: 'string' },
+            }
+          }
+        },
+        morePage: {
+          type: 'object',
+          nullable: true,
+          required: ['next'],
+          properties: {
+            next: { type: 'string' }
+          }
+        },
+        pageModel: {
+          type: 'object',
+          required: ['lastPage'],
+          properties: {
+            lastPage: { type: 'number' }
+          }
+        }
+      }
+    }
+  },
+  additionalProperties: false,
+};
 
-export function validateNewsCommentsObj(data: any) {
-  validateNotEmpty(data);
-  validateNotEmpty(data.result);
-  validateNotEmpty(data.result.commentList);
-  if (data.result.commentList.length > 0) {
-    validateNotEmpty(data.result.commentList[0].contents);
-    validateNotEmpty(data.result.commentList[0].sympathyCount);
-    validateNotEmpty(data.result.commentList[0].antipathyCount);
-    validateNotEmpty(data.result.commentList[0].modTime); // 날짜 정보
-    // more page는 없을 수도 있음
-    validateNotEmpty(data.result.morePage);
-    validateNotEmpty(data.result.morePage.next);
-  }
-  validateNotEmpty(data.result.pageModel);
-  validateNotEmpty(data.result.pageModel.lastPage);
-}
+export const validateNewsCommentsObj = ajv.compile(NewsCommentObjectSchema);
 
-export function validateSqsData(data: any) {
-  validateNotEmpty(data);
-  validateNotEmpty(data.keywords);
-  validateNotEmpty(data.news_sources);
-}
+// export function validateSqsData(data: any) {
+//   validateNotEmpty(data);
+//   validateNotEmpty(data.keywords);
+//   validateNotEmpty(data.news_sources);
+// }
