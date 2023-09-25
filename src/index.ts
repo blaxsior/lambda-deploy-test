@@ -16,33 +16,36 @@ const sqs = new SQSClient({ region });
 const s3 = new S3Client({ region });
 
 export const handler: SQSHandler = async (event, context): Promise<void> => {
-  const data = getSqsDataFromEvent(event);
-  const keyword = '윤석열';
-  const list = ['1002'];
+  const { keywords, news_sources } = getSqsDataFromEvent(event);
+  // const keyword = '윤석열';
+  // const list = ['1002'];
   // 키워드를 읽어와서 아래와 같이 처리해야 함...
-  const fileName = genRandomFileName();
-  const result = await getNewsAndCommentResults(keyword, list);
+  for (const keyword of keywords) {
+    const fileName = genRandomFileName();
+    const result = await getNewsAndCommentResults(keyword, news_sources);
+    const sqsCommand = new SendMessageCommand({
+      QueueUrl: sqsURL,
+      MessageBody: JSON.stringify({
+        keyword: keyword,
+        key: fileName,
+      }),
+    });
 
-  const sqsCommand = new SendMessageCommand({
-    QueueUrl: sqsURL,
-    MessageBody: JSON.stringify({
-      keyword: keyword,
-      key: fileName,
-    }),
-  });
+    const s3Command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: fileName,
+      Body: JSON.stringify(result),
+    });
 
-  const s3Command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: fileName,
-    Body: JSON.stringify(result),
-  });
-
-  try {
-    const s3result = await s3.send(s3Command);
-    const sqsresult = await sqs.send(sqsCommand);
-  } catch (e) {
-    console.log(e);
+    try {
+      const s3result = await s3.send(s3Command);
+      const sqsresult = await sqs.send(sqsCommand);
+    } catch (e) {
+      console.log(e);
+    }
   }
+
+
 }
 
 
