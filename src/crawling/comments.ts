@@ -19,7 +19,7 @@ const options: Record<string, string> = {
   pool: 'cbox5',
   lang: 'ko',
   country: 'KR',
-  pageSize: '100', // 최대한 요청 줄이기 위해 초기 값을 크게 설정
+  pageSize: '5', // 댓글은 5개만 있어도 된다고 합의함.
   indexSize: '10',
   pageType: 'more',
   sort: 'favorite',
@@ -41,19 +41,31 @@ export async function getNewsCommentsObject(
   commentsAddr: string,
   pno = 1,
   next = '',
+  retry = 3,
+  waitTime = 1000
 ) {
   const cmaddr = `${commentsAddr}&page=${pno}&moreParam.next=${next ?? ''}`;
-
-  const req = await axios.get<string>(cmaddr, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102',
-      Referer: newsAddr,
-    },
-  });
-  if (!req.data) throw new Error(`ERROR[no data]: ${cmaddr}`);
-  const json = removeFunctionCall(req.data);
-  return JSON.parse(json);
+  let count = 0;
+  while(count < retry) {
+    try {
+      const req = await axios.get<string>(cmaddr, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102',
+          Referer: newsAddr,
+        },
+      });
+      if (!req.data) throw new Error(`ERROR[no data]: ${cmaddr}`);
+      const json = removeFunctionCall(req.data);
+      return JSON.parse(json);
+    }
+    catch {
+      count++;
+      waitTime *= 2;
+      await setTimeout(waitTime);
+    }  
+  }
+  if(count === retry) throw new Error(`ERROR[failed to fetch]: ${cmaddr}`);
 }
 /**
  * 기사 url을 받고 해당 기사의 댓글 목록을 반환
@@ -68,16 +80,16 @@ export async function getNewsComments(newsAddr: string, limit = 10): Promise<Com
   const comments: Comment[] = [];
   let next = '';
   let page = 1;
-  while (page < limit) {
+  // while (page < limit) {
     const data = await getNewsCommentsObject(newsAddr, commentAddr, page, next);
     const pageCommentList = getNewsCommentsFromCommentsObj(data);
     comments.push(...pageCommentList);
-    if (page >= data.result.pageModel.lastPage) {
-      break;
-    }
-    page++;
-    next = data.result.morePage.next;
-  }
+  //   if (page >= data.result.pageModel.lastPage) {
+  //     break;
+  //   }
+  //   page++;
+  //   next = data.result.morePage.next;
+  // }
   return comments;
 }
 

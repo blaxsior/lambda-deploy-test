@@ -21,4 +21,8 @@ export function validateNewsCommentsObj(data: any) {
   validateNotEmpty(data.result.pageModel.lastPage);
 }
 
-// 차후 empty 조건 말고도 추가해야 할 수도 있음
+export function validateSqsData(data: any) {
+  validateNotEmpty(data);
+  validateNotEmpty(data.keywords);
+  validateNotEmpty(data.news_sources);
+}
