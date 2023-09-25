@@ -5,7 +5,7 @@ import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getNewsAndCommentResults } from './crawling/index.js';
 import { genRandomFileName } from './util/gen-key.js';
-import { getSqsDataFromEvent } from './sqs/index.js';
+import { getSqsDataFromBodyStr } from './sqs/index.js';
 
 
 const sqsURL = process.env.SQS_URL;
@@ -16,36 +16,36 @@ const sqs = new SQSClient({ region });
 const s3 = new S3Client({ region });
 
 export const handler: SQSHandler = async (event, context): Promise<void> => {
-  const { keywords, news_sources } = getSqsDataFromEvent(event);
-  // const keyword = '윤석열';
-  // const list = ['1002'];
-  // 키워드를 읽어와서 아래와 같이 처리해야 함...
-  for (const keyword of keywords) {
-    const fileName = genRandomFileName();
-    const result = await getNewsAndCommentResults(keyword, news_sources);
-    const sqsCommand = new SendMessageCommand({
-      QueueUrl: sqsURL,
-      MessageBody: JSON.stringify({
-        keyword: keyword,
-        key: fileName,
-      }),
-    });
+  for (const record of event.Records) {
+    const { keywords, news_sources } = getSqsDataFromBodyStr(record.body);
+    // const keyword = '윤석열';
+    // const list = ['1002'];
+    // 키워드를 읽어와서 아래와 같이 처리해야 함...
+    for (const keyword of keywords) {
+      const fileName = genRandomFileName();
+      const result = await getNewsAndCommentResults(keyword, news_sources);
+      const sqsCommand = new SendMessageCommand({
+        QueueUrl: sqsURL,
+        MessageBody: JSON.stringify({
+          keyword: keyword,
+          key: fileName,
+        }),
+      });
 
-    const s3Command = new PutObjectCommand({
-      Bucket: bucket,
-      Key: fileName,
-      Body: JSON.stringify(result),
-    });
+      const s3Command = new PutObjectCommand({
+        Bucket: bucket,
+        Key: fileName,
+        Body: JSON.stringify(result),
+      });
 
-    try {
-      const s3result = await s3.send(s3Command);
-      const sqsresult = await sqs.send(sqsCommand);
-    } catch (e) {
-      console.log(e);
+      try {
+        const s3result = await s3.send(s3Command);
+        const sqsresult = await sqs.send(sqsCommand);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
-
-
 }
 
 

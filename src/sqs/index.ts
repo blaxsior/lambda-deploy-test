@@ -6,8 +6,7 @@ interface SqsDataType { // Sqs에서 전달하는 데이터
   news_sources: string[];
 }
 
-export function getSqsDataFromEvent(event): SqsDataType {
-  const body = event.Records[0]?.body;
+export function getSqsDataFromBodyStr(body: string): SqsDataType {
   const json = JSON.parse(body);
   validateSqsData(json);
   return json;
