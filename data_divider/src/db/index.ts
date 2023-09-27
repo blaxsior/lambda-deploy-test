@@ -1,7 +1,7 @@
 import Knex from 'knex';
 // import 'dotenv/config';
 import { Keyword, NewsSource } from './type';
-console.log(process.env);
+// console.log(process.env);
 const knex = Knex({
   client: 'mysql2',
   connection: {
