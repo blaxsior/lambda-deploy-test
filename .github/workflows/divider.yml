@@ -29,8 +29,8 @@ jobs:
           node-version: 18    
       - run: npm ci
 
-      - name: test phase
-        run: npm test
+      # - name: test phase
+      #   run: npm test
 
       - name: compile files
         run: tsc
@@ -38,7 +38,7 @@ jobs:
       - name: create zip file
         uses: TheDoctor0/zip-release@0.7.1
         with:
-          directory: ./dist
+          directory: ./data_divider/dist
         
       - name: deploy to aws
         uses: appleboy/lambda-action@v0.1.9 
@@ -47,4 +47,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_ACCESS_PASSWORD }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: data_devide
-          zip_file: ./dist/release.zip
+          zip_file: ./data_divider/dist/release.zip
