@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: News_Crawler
 
 # Controls when the workflow will run
 on:
@@ -8,9 +8,13 @@ on:
     branches:
       - master
     paths: 
-      - src/**
+      - news_crawler/src/**
   # Triggers the workflow on push or pull request events but only for the "master" branch
   workflow_dispatch:
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#defaultsrun
+defaults:
+  run:
+    working-directory: ./news_crawler
 
 jobs:
   # This workflow contains a single job called "build"
@@ -18,11 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Run a one-line script
-        run: echo hello, world!
-      - name: Run ls -al
-        run: ls -al
 
       - name: install npm packages
         uses: actions/setup-node@v3
