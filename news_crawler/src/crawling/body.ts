@@ -1,16 +1,22 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { parse } from 'node-html-parser';
 import { validateNotEmpty } from '../util/validation.js';
 import { Article } from './types.js';
+import { withRetry } from '../util/retry.js';
 
 export async function getNewsBody(address: string): Promise<Article> {
-  const req = await axios.get(address, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102',
-    },
+  let req: AxiosResponse;
+  
+  await withRetry(async () => {
+    req = await axios.get(address, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102',
+      },
+    });
   });
-  const root = parse(req.data);
+
+  const root = parse(req!.data);
 
   let title = '';
   // let author = '';

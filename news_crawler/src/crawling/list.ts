@@ -98,7 +98,7 @@ export async function getNewsLinkList(
       // 90개 읽을 때마다 멈춤
       await setTimeoutPromises(inner_delay);
     } else {
-      setTimeoutPromises(default_delay_ms);
+      await setTimeoutPromises(default_delay_ms);
     }
     req_count++; // 한번 읽었다.
     const url = `${baseUrl}&start=${count}`;
