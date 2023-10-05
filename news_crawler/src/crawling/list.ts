@@ -111,11 +111,11 @@ export async function getNewsLinkList(
       });
     } catch (e) {
       if (e instanceof AxiosError) {
-        console.log(e.code);
-        console.log(e.message);
-        console.log('Error Status: ', e.status);
+        console.error(e.code);
+        console.error(e.message);
+        console.error('Error Status: ', e.status);
       }
-      console.log('ERROR_URL: ', url);
+      console.error('ERROR_URL: ', url);
       inner_delay *= 2;
       req_count = 0;
       continue;

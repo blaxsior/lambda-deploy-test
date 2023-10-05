@@ -1,4 +1,4 @@
-import { setTimeout } from "timers/promises";
+import { setTimeout as setTimeoutPromises } from "timers/promises";
 
 type AsyncAction = () => Promise<void>;
 
@@ -38,7 +38,7 @@ export async function withRetry(action: AsyncAction, options: RetryOptions = {})
       break;
     } catch (e) {
       console.error(e); // 에러 출력
-      await setTimeout(waitTime); // 일정 시간 대기
+      await setTimeoutPromises(waitTime); // 일정 시간 대기
       count++;
       waitTime *= 2;
     }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { validateNewsCommentsObj } from '../util/validation.js';
 import { getBaseUrl } from './util.js';
-import { setTimeout } from 'timers/promises';
+import { setTimeout as setTimeoutPromises } from 'timers/promises';
 import { Comment } from './types.js';
 
 // apis.naver.com/commentBox/cbox/web_naver_list_jsonp.json?
@@ -63,7 +63,7 @@ export async function getNewsCommentsObject(
     catch {
       count++;
       waitTime *= 2;
-      await setTimeout(waitTime);
+      await setTimeoutPromises(waitTime);
     }  
   }
   if(count === retry) throw new Error(`ERROR[failed to fetch]: ${cmaddr}`);

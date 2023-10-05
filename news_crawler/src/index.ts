@@ -45,7 +45,7 @@ export const handler: SQSHandler = async (event, context): Promise<void> => {
         const s3result = await s3.send(s3Command);
         const sqsresult = await sqs.send(sqsCommand);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
   }
