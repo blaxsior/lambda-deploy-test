@@ -3,10 +3,10 @@ import { getSqsDataFromBodyStr } from './index.js';
 
 describe('getSqsDataFromEvent()', () => {
   it('should return data if body is valid', () => {
-    const input = '{"keywords":["test"], "news_sources":["1020"]}';
-    const expected = {keywords:['test'], news_sources:['1020']};
+    const input = '{"keywords":[{"id": 1, "name": "test"}], "news_sources":["1020"]}';
+    const expected = {keywords:[{id: 1, name:'test'}], news_sources:['1020']};
     const result = getSqsDataFromBodyStr(input);
-  
+
     expect(result).toEqual(expected);
   });
 
