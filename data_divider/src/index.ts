@@ -8,7 +8,8 @@ const sqs = new SQSClient({ region });
 const STEP = 3;
 
 export const handler = async (): Promise<void> => {
-  const keywords = (await keyword.select('name').where('isActive', true)).map(it => it.name);
+  // id / name 모두 전달해주는 것이 좋다고 설명
+  const keywords = (await keyword.select('id', 'name').where('isActive', true));
   const news_sources = (await news_source.select('media_id')).map(it => it.media_id);
   // const news_sources = ['1023'];
   // , '1025', '1020', '1032', '1028', '1047'

@@ -26,7 +26,7 @@ export const handler: SQSHandler = async (event, context): Promise<void> => {
     // 키워드를 읽어와서 아래와 같이 처리해야 함...
     for (const keyword of keywords) {
       const fileName = genRandomFileName();
-      const result = await getNewsAndCommentResults(keyword, news_sources);
+      const result = await getNewsAndCommentResults(keyword.name, news_sources);
       const sqsCommand = new SendMessageCommand({
         QueueUrl: sqsURL,
         MessageBody: JSON.stringify({
