@@ -52,7 +52,10 @@ export async function getNewsBody(address: string): Promise<Article> {
   if(paragraphs) {
     for (const paragraph of paragraphs) {
       if (paragraph.length === 0) continue;
-      const paragraphs = paragraph.split('.').map((it) => it.trim());
+      const paragraphs = paragraph
+        .replaceAll('\xa0', '')
+        .split('.')
+        .map((it) => it.trim());
       newsParagraphs.push(...paragraphs);
     }    
   }
